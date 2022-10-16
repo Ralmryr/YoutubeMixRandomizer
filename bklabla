@@ -1,0 +1,1386 @@
+!(function () {
+    var e = {
+            484: function (e) {
+                e.exports = (function () {
+                    "use strict";
+                    var e = 6e4,
+                        r = 36e5,
+                        t = "millisecond",
+                        n = "second",
+                        s = "minute",
+                        a = "hour",
+                        o = "day",
+                        i = "week",
+                        c = "month",
+                        g = "quarter",
+                        l = "year",
+                        m = "date",
+                        u = "Invalid Date",
+                        d = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/,
+                        f = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g,
+                        A = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_") },
+                        p = function (e, r, t) {
+                            var n = String(e);
+                            return !n || n.length >= r ? e : "" + Array(r + 1 - n.length).join(t) + e;
+                        },
+                        h = {
+                            s: p,
+                            z: function (e) {
+                                var r = -e.utcOffset(),
+                                    t = Math.abs(r),
+                                    n = Math.floor(t / 60),
+                                    s = t % 60;
+                                return (r <= 0 ? "+" : "-") + p(n, 2, "0") + ":" + p(s, 2, "0");
+                            },
+                            m: function e(r, t) {
+                                if (r.date() < t.date()) return -e(t, r);
+                                var n = 12 * (t.year() - r.year()) + (t.month() - r.month()),
+                                    s = r.clone().add(n, c),
+                                    a = t - s < 0,
+                                    o = r.clone().add(n + (a ? -1 : 1), c);
+                                return +(-(n + (t - s) / (a ? s - o : o - s)) || 0);
+                            },
+                            a: function (e) {
+                                return e < 0 ? Math.ceil(e) || 0 : Math.floor(e);
+                            },
+                            p: function (e) {
+                                return (
+                                    { M: c, y: l, w: i, d: o, D: m, h: a, m: s, s: n, ms: t, Q: g }[e] ||
+                                    String(e || "")
+                                        .toLowerCase()
+                                        .replace(/s$/, "")
+                                );
+                            },
+                            u: function (e) {
+                                return void 0 === e;
+                            },
+                        },
+                        x = "en",
+                        y = {};
+                    y[x] = A;
+                    var b = function (e) {
+                            return e instanceof F;
+                        },
+                        C = function e(r, t, n) {
+                            var s;
+                            if (!r) return x;
+                            if ("string" == typeof r) {
+                                var a = r.toLowerCase();
+                                y[a] && (s = a), t && ((y[a] = t), (s = a));
+                                var o = r.split("-");
+                                if (!s && o.length > 1) return e(o[0]);
+                            } else {
+                                var i = r.name;
+                                (y[i] = r), (s = i);
+                            }
+                            return !n && s && (x = s), s || (!n && x);
+                        },
+                        w = function (e, r) {
+                            if (b(e)) return e.clone();
+                            var t = "object" == typeof r ? r : {};
+                            return (t.date = e), (t.args = arguments), new F(t);
+                        },
+                        v = h;
+                    (v.l = C),
+                        (v.i = b),
+                        (v.w = function (e, r) {
+                            return w(e, { locale: r.$L, utc: r.$u, x: r.$x, $offset: r.$offset });
+                        });
+                    var F = (function () {
+                            function A(e) {
+                                (this.$L = C(e.locale, null, !0)), this.parse(e);
+                            }
+                            var p = A.prototype;
+                            return (
+                                (p.parse = function (e) {
+                                    (this.$d = (function (e) {
+                                        var r = e.date,
+                                            t = e.utc;
+                                        if (null === r) return new Date(NaN);
+                                        if (v.u(r)) return new Date();
+                                        if (r instanceof Date) return new Date(r);
+                                        if ("string" == typeof r && !/Z$/i.test(r)) {
+                                            var n = r.match(d);
+                                            if (n) {
+                                                var s = n[2] - 1 || 0,
+                                                    a = (n[7] || "0").substring(0, 3);
+                                                return t ? new Date(Date.UTC(n[1], s, n[3] || 1, n[4] || 0, n[5] || 0, n[6] || 0, a)) : new Date(n[1], s, n[3] || 1, n[4] || 0, n[5] || 0, n[6] || 0, a);
+                                            }
+                                        }
+                                        return new Date(r);
+                                    })(e)),
+                                        (this.$x = e.x || {}),
+                                        this.init();
+                                }),
+                                (p.init = function () {
+                                    var e = this.$d;
+                                    (this.$y = e.getFullYear()),
+                                        (this.$M = e.getMonth()),
+                                        (this.$D = e.getDate()),
+                                        (this.$W = e.getDay()),
+                                        (this.$H = e.getHours()),
+                                        (this.$m = e.getMinutes()),
+                                        (this.$s = e.getSeconds()),
+                                        (this.$ms = e.getMilliseconds());
+                                }),
+                                (p.$utils = function () {
+                                    return v;
+                                }),
+                                (p.isValid = function () {
+                                    return !(this.$d.toString() === u);
+                                }),
+                                (p.isSame = function (e, r) {
+                                    var t = w(e);
+                                    return this.startOf(r) <= t && t <= this.endOf(r);
+                                }),
+                                (p.isAfter = function (e, r) {
+                                    return w(e) < this.startOf(r);
+                                }),
+                                (p.isBefore = function (e, r) {
+                                    return this.endOf(r) < w(e);
+                                }),
+                                (p.$g = function (e, r, t) {
+                                    return v.u(e) ? this[r] : this.set(t, e);
+                                }),
+                                (p.unix = function () {
+                                    return Math.floor(this.valueOf() / 1e3);
+                                }),
+                                (p.valueOf = function () {
+                                    return this.$d.getTime();
+                                }),
+                                (p.startOf = function (e, r) {
+                                    var t = this,
+                                        g = !!v.u(r) || r,
+                                        u = v.p(e),
+                                        d = function (e, r) {
+                                            var n = v.w(t.$u ? Date.UTC(t.$y, r, e) : new Date(t.$y, r, e), t);
+                                            return g ? n : n.endOf(o);
+                                        },
+                                        f = function (e, r) {
+                                            return v.w(t.toDate()[e].apply(t.toDate("s"), (g ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(r)), t);
+                                        },
+                                        A = this.$W,
+                                        p = this.$M,
+                                        h = this.$D,
+                                        x = "set" + (this.$u ? "UTC" : "");
+                                    switch (u) {
+                                        case l:
+                                            return g ? d(1, 0) : d(31, 11);
+                                        case c:
+                                            return g ? d(1, p) : d(0, p + 1);
+                                        case i:
+                                            var y = this.$locale().weekStart || 0,
+                                                b = (A < y ? A + 7 : A) - y;
+                                            return d(g ? h - b : h + (6 - b), p);
+                                        case o:
+                                        case m:
+                                            return f(x + "Hours", 0);
+                                        case a:
+                                            return f(x + "Minutes", 1);
+                                        case s:
+                                            return f(x + "Seconds", 2);
+                                        case n:
+                                            return f(x + "Milliseconds", 3);
+                                        default:
+                                            return this.clone();
+                                    }
+                                }),
+                                (p.endOf = function (e) {
+                                    return this.startOf(e, !1);
+                                }),
+                                (p.$set = function (e, r) {
+                                    var i,
+                                        g = v.p(e),
+                                        u = "set" + (this.$u ? "UTC" : ""),
+                                        d = ((i = {}),
+                                        (i[o] = u + "Date"),
+                                        (i[m] = u + "Date"),
+                                        (i[c] = u + "Month"),
+                                        (i[l] = u + "FullYear"),
+                                        (i[a] = u + "Hours"),
+                                        (i[s] = u + "Minutes"),
+                                        (i[n] = u + "Seconds"),
+                                        (i[t] = u + "Milliseconds"),
+                                        i)[g],
+                                        f = g === o ? this.$D + (r - this.$W) : r;
+                                    if (g === c || g === l) {
+                                        var A = this.clone().set(m, 1);
+                                        A.$d[d](f), A.init(), (this.$d = A.set(m, Math.min(this.$D, A.daysInMonth())).$d);
+                                    } else d && this.$d[d](f);
+                                    return this.init(), this;
+                                }),
+                                (p.set = function (e, r) {
+                                    return this.clone().$set(e, r);
+                                }),
+                                (p.get = function (e) {
+                                    return this[v.p(e)]();
+                                }),
+                                (p.add = function (t, g) {
+                                    var m,
+                                        u = this;
+                                    t = Number(t);
+                                    var d = v.p(g),
+                                        f = function (e) {
+                                            var r = w(u);
+                                            return v.w(r.date(r.date() + Math.round(e * t)), u);
+                                        };
+                                    if (d === c) return this.set(c, this.$M + t);
+                                    if (d === l) return this.set(l, this.$y + t);
+                                    if (d === o) return f(1);
+                                    if (d === i) return f(7);
+                                    var A = ((m = {}), (m[s] = e), (m[a] = r), (m[n] = 1e3), m)[d] || 1,
+                                        p = this.$d.getTime() + t * A;
+                                    return v.w(p, this);
+                                }),
+                                (p.subtract = function (e, r) {
+                                    return this.add(-1 * e, r);
+                                }),
+                                (p.format = function (e) {
+                                    var r = this,
+                                        t = this.$locale();
+                                    if (!this.isValid()) return t.invalidDate || u;
+                                    var n = e || "YYYY-MM-DDTHH:mm:ssZ",
+                                        s = v.z(this),
+                                        a = this.$H,
+                                        o = this.$m,
+                                        i = this.$M,
+                                        c = t.weekdays,
+                                        g = t.months,
+                                        l = function (e, t, s, a) {
+                                            return (e && (e[t] || e(r, n))) || s[t].slice(0, a);
+                                        },
+                                        m = function (e) {
+                                            return v.s(a % 12 || 12, e, "0");
+                                        },
+                                        d =
+                                            t.meridiem ||
+                                            function (e, r, t) {
+                                                var n = e < 12 ? "AM" : "PM";
+                                                return t ? n.toLowerCase() : n;
+                                            },
+                                        A = {
+                                            YY: String(this.$y).slice(-2),
+                                            YYYY: this.$y,
+                                            M: i + 1,
+                                            MM: v.s(i + 1, 2, "0"),
+                                            MMM: l(t.monthsShort, i, g, 3),
+                                            MMMM: l(g, i),
+                                            D: this.$D,
+                                            DD: v.s(this.$D, 2, "0"),
+                                            d: String(this.$W),
+                                            dd: l(t.weekdaysMin, this.$W, c, 2),
+                                            ddd: l(t.weekdaysShort, this.$W, c, 3),
+                                            dddd: c[this.$W],
+                                            H: String(a),
+                                            HH: v.s(a, 2, "0"),
+                                            h: m(1),
+                                            hh: m(2),
+                                            a: d(a, o, !0),
+                                            A: d(a, o, !1),
+                                            m: String(o),
+                                            mm: v.s(o, 2, "0"),
+                                            s: String(this.$s),
+                                            ss: v.s(this.$s, 2, "0"),
+                                            SSS: v.s(this.$ms, 3, "0"),
+                                            Z: s,
+                                        };
+                                    return n.replace(f, function (e, r) {
+                                        return r || A[e] || s.replace(":", "");
+                                    });
+                                }),
+                                (p.utcOffset = function () {
+                                    return 15 * -Math.round(this.$d.getTimezoneOffset() / 15);
+                                }),
+                                (p.diff = function (t, m, u) {
+                                    var d,
+                                        f = v.p(m),
+                                        A = w(t),
+                                        p = (A.utcOffset() - this.utcOffset()) * e,
+                                        h = this - A,
+                                        x = v.m(this, A);
+                                    return (x = ((d = {}), (d[l] = x / 12), (d[c] = x), (d[g] = x / 3), (d[i] = (h - p) / 6048e5), (d[o] = (h - p) / 864e5), (d[a] = h / r), (d[s] = h / e), (d[n] = h / 1e3), d)[f] || h), u ? x : v.a(x);
+                                }),
+                                (p.daysInMonth = function () {
+                                    return this.endOf(c).$D;
+                                }),
+                                (p.$locale = function () {
+                                    return y[this.$L];
+                                }),
+                                (p.locale = function (e, r) {
+                                    if (!e) return this.$L;
+                                    var t = this.clone(),
+                                        n = C(e, r, !0);
+                                    return n && (t.$L = n), t;
+                                }),
+                                (p.clone = function () {
+                                    return v.w(this.$d, this);
+                                }),
+                                (p.toDate = function () {
+                                    return new Date(this.valueOf());
+                                }),
+                                (p.toJSON = function () {
+                                    return this.isValid() ? this.toISOString() : null;
+                                }),
+                                (p.toISOString = function () {
+                                    return this.$d.toISOString();
+                                }),
+                                (p.toString = function () {
+                                    return this.$d.toUTCString();
+                                }),
+                                A
+                            );
+                        })(),
+                        $ = F.prototype;
+                    return (
+                        (w.prototype = $),
+                        [
+                            ["$ms", t],
+                            ["$s", n],
+                            ["$m", s],
+                            ["$H", a],
+                            ["$W", o],
+                            ["$M", c],
+                            ["$y", l],
+                            ["$D", m],
+                        ].forEach(function (e) {
+                            $[e[1]] = function (r) {
+                                return this.$g(r, e[0], e[1]);
+                            };
+                        }),
+                        (w.extend = function (e, r) {
+                            return e.$i || (e(r, F, w), (e.$i = !0)), w;
+                        }),
+                        (w.locale = C),
+                        (w.isDayjs = b),
+                        (w.unix = function (e) {
+                            return w(1e3 * e);
+                        }),
+                        (w.en = y[x]),
+                        (w.Ls = y),
+                        (w.p = {}),
+                        w
+                    );
+                })();
+            },
+            227: function (e, r, t) {
+                (r.formatArgs = function (r) {
+                    if (((r[0] = (this.useColors ? "%c" : "") + this.namespace + (this.useColors ? " %c" : " ") + r[0] + (this.useColors ? "%c " : " ") + "+" + e.exports.humanize(this.diff)), !this.useColors)) return;
+                    const t = "color: " + this.color;
+                    r.splice(1, 0, t, "color: inherit");
+                    let n = 0,
+                        s = 0;
+                    r[0].replace(/%[a-zA-Z%]/g, (e) => {
+                        "%%" !== e && (n++, "%c" === e && (s = n));
+                    }),
+                        r.splice(s, 0, t);
+                }),
+                    (r.save = function (e) {
+                        try {
+                            e ? r.storage.setItem("debug", e) : r.storage.removeItem("debug");
+                        } catch (e) {}
+                    }),
+                    (r.load = function () {
+                        let e;
+                        try {
+                            e = r.storage.getItem("debug");
+                        } catch (e) {}
+                        return !e && "undefined" != typeof process && "env" in process && (e = process.env.DEBUG), e;
+                    }),
+                    (r.useColors = function () {
+                        return (
+                            !("undefined" == typeof window || !window.process || ("renderer" !== window.process.type && !window.process.__nwjs)) ||
+                            (("undefined" == typeof navigator || !navigator.userAgent || !navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) &&
+                                (("undefined" != typeof document && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
+                                    ("undefined" != typeof window && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
+                                    ("undefined" != typeof navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
+                                    ("undefined" != typeof navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/))))
+                        );
+                    }),
+                    (r.storage = (function () {
+                        try {
+                            return localStorage;
+                        } catch (e) {}
+                    })()),
+                    (r.destroy = (() => {
+                        let e = !1;
+                        return () => {
+                            e || ((e = !0), console.warn("Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`."));
+                        };
+                    })()),
+                    (r.colors = [
+                        "#0000CC",
+                        "#0000FF",
+                        "#0033CC",
+                        "#0033FF",
+                        "#0066CC",
+                        "#0066FF",
+                        "#0099CC",
+                        "#0099FF",
+                        "#00CC00",
+                        "#00CC33",
+                        "#00CC66",
+                        "#00CC99",
+                        "#00CCCC",
+                        "#00CCFF",
+                        "#3300CC",
+                        "#3300FF",
+                        "#3333CC",
+                        "#3333FF",
+                        "#3366CC",
+                        "#3366FF",
+                        "#3399CC",
+                        "#3399FF",
+                        "#33CC00",
+                        "#33CC33",
+                        "#33CC66",
+                        "#33CC99",
+                        "#33CCCC",
+                        "#33CCFF",
+                        "#6600CC",
+                        "#6600FF",
+                        "#6633CC",
+                        "#6633FF",
+                        "#66CC00",
+                        "#66CC33",
+                        "#9900CC",
+                        "#9900FF",
+                        "#9933CC",
+                        "#9933FF",
+                        "#99CC00",
+                        "#99CC33",
+                        "#CC0000",
+                        "#CC0033",
+                        "#CC0066",
+                        "#CC0099",
+                        "#CC00CC",
+                        "#CC00FF",
+                        "#CC3300",
+                        "#CC3333",
+                        "#CC3366",
+                        "#CC3399",
+                        "#CC33CC",
+                        "#CC33FF",
+                        "#CC6600",
+                        "#CC6633",
+                        "#CC9900",
+                        "#CC9933",
+                        "#CCCC00",
+                        "#CCCC33",
+                        "#FF0000",
+                        "#FF0033",
+                        "#FF0066",
+                        "#FF0099",
+                        "#FF00CC",
+                        "#FF00FF",
+                        "#FF3300",
+                        "#FF3333",
+                        "#FF3366",
+                        "#FF3399",
+                        "#FF33CC",
+                        "#FF33FF",
+                        "#FF6600",
+                        "#FF6633",
+                        "#FF9900",
+                        "#FF9933",
+                        "#FFCC00",
+                        "#FFCC33",
+                    ]),
+                    (r.log = console.debug || console.log || (() => {})),
+                    (e.exports = t(447)(r));
+                const { formatters: n } = e.exports;
+                n.j = function (e) {
+                    try {
+                        return JSON.stringify(e);
+                    } catch (e) {
+                        return "[UnexpectedJSONParseError]: " + e.message;
+                    }
+                };
+            },
+            447: function (e, r, t) {
+                e.exports = function (e) {
+                    function r(e) {
+                        let t,
+                            s,
+                            a,
+                            o = null;
+                        function i(...e) {
+                            if (!i.enabled) return;
+                            const n = i,
+                                s = Number(new Date()),
+                                a = s - (t || s);
+                            (n.diff = a), (n.prev = t), (n.curr = s), (t = s), (e[0] = r.coerce(e[0])), "string" != typeof e[0] && e.unshift("%O");
+                            let o = 0;
+                            (e[0] = e[0].replace(/%([a-zA-Z%])/g, (t, s) => {
+                                if ("%%" === t) return "%";
+                                o++;
+                                const a = r.formatters[s];
+                                if ("function" == typeof a) {
+                                    const r = e[o];
+                                    (t = a.call(n, r)), e.splice(o, 1), o--;
+                                }
+                                return t;
+                            })),
+                                r.formatArgs.call(n, e),
+                                (n.log || r.log).apply(n, e);
+                        }
+                        return (
+                            (i.namespace = e),
+                            (i.useColors = r.useColors()),
+                            (i.color = r.selectColor(e)),
+                            (i.extend = n),
+                            (i.destroy = r.destroy),
+                            Object.defineProperty(i, "enabled", {
+                                enumerable: !0,
+                                configurable: !1,
+                                get: () => (null !== o ? o : (s !== r.namespaces && ((s = r.namespaces), (a = r.enabled(e))), a)),
+                                set: (e) => {
+                                    o = e;
+                                },
+                            }),
+                            "function" == typeof r.init && r.init(i),
+                            i
+                        );
+                    }
+                    function n(e, t) {
+                        const n = r(this.namespace + (void 0 === t ? ":" : t) + e);
+                        return (n.log = this.log), n;
+                    }
+                    function s(e) {
+                        return e
+                            .toString()
+                            .substring(2, e.toString().length - 2)
+                            .replace(/\.\*\?$/, "*");
+                    }
+                    return (
+                        (r.debug = r),
+                        (r.default = r),
+                        (r.coerce = function (e) {
+                            return e instanceof Error ? e.stack || e.message : e;
+                        }),
+                        (r.disable = function () {
+                            const e = [...r.names.map(s), ...r.skips.map(s).map((e) => "-" + e)].join(",");
+                            return r.enable(""), e;
+                        }),
+                        (r.enable = function (e) {
+                            let t;
+                            r.save(e), (r.namespaces = e), (r.names = []), (r.skips = []);
+                            const n = ("string" == typeof e ? e : "").split(/[\s,]+/),
+                                s = n.length;
+                            for (t = 0; t < s; t++) n[t] && ("-" === (e = n[t].replace(/\*/g, ".*?"))[0] ? r.skips.push(new RegExp("^" + e.slice(1) + "$")) : r.names.push(new RegExp("^" + e + "$")));
+                        }),
+                        (r.enabled = function (e) {
+                            if ("*" === e[e.length - 1]) return !0;
+                            let t, n;
+                            for (t = 0, n = r.skips.length; t < n; t++) if (r.skips[t].test(e)) return !1;
+                            for (t = 0, n = r.names.length; t < n; t++) if (r.names[t].test(e)) return !0;
+                            return !1;
+                        }),
+                        (r.humanize = t(824)),
+                        (r.destroy = function () {
+                            console.warn("Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.");
+                        }),
+                        Object.keys(e).forEach((t) => {
+                            r[t] = e[t];
+                        }),
+                        (r.names = []),
+                        (r.skips = []),
+                        (r.formatters = {}),
+                        (r.selectColor = function (e) {
+                            let t = 0;
+                            for (let r = 0; r < e.length; r++) (t = (t << 5) - t + e.charCodeAt(r)), (t |= 0);
+                            return r.colors[Math.abs(t) % r.colors.length];
+                        }),
+                        r.enable(r.load()),
+                        r
+                    );
+                };
+            },
+            20: function (e) {
+                "use strict";
+                var r = "%[a-f0-9]{2}",
+                    t = new RegExp(r, "gi"),
+                    n = new RegExp("(" + r + ")+", "gi");
+                function s(e, r) {
+                    try {
+                        return decodeURIComponent(e.join(""));
+                    } catch (e) {}
+                    if (1 === e.length) return e;
+                    r = r || 1;
+                    var t = e.slice(0, r),
+                        n = e.slice(r);
+                    return Array.prototype.concat.call([], s(t), s(n));
+                }
+                function a(e) {
+                    try {
+                        return decodeURIComponent(e);
+                    } catch (a) {
+                        for (var r = e.match(t), n = 1; n < r.length; n++) r = (e = s(r, n).join("")).match(t);
+                        return e;
+                    }
+                }
+                e.exports = function (e) {
+                    if ("string" != typeof e) throw new TypeError("Expected `encodedURI` to be of type `string`, got `" + typeof e + "`");
+                    try {
+                        return (e = e.replace(/\+/g, " ")), decodeURIComponent(e);
+                    } catch (r) {
+                        return (function (e) {
+                            for (var r = { "%FE%FF": "��", "%FF%FE": "��" }, t = n.exec(e); t; ) {
+                                try {
+                                    r[t[0]] = decodeURIComponent(t[0]);
+                                } catch (e) {
+                                    var s = a(t[0]);
+                                    s !== t[0] && (r[t[0]] = s);
+                                }
+                                t = n.exec(e);
+                            }
+                            r["%C2"] = "�";
+                            for (var o = Object.keys(r), i = 0; i < o.length; i++) {
+                                var c = o[i];
+                                e = e.replace(new RegExp(c, "g"), r[c]);
+                            }
+                            return e;
+                        })(e);
+                    }
+                };
+            },
+            806: function (e) {
+                "use strict";
+                e.exports = function (e, r) {
+                    for (var t = {}, n = Object.keys(e), s = Array.isArray(r), a = 0; a < n.length; a++) {
+                        var o = n[a],
+                            i = e[o];
+                        (s ? -1 !== r.indexOf(o) : r(o, i, e)) && (t[o] = i);
+                    }
+                    return t;
+                };
+            },
+            824: function (e) {
+                var r = 1e3,
+                    t = 60 * r,
+                    n = 60 * t,
+                    s = 24 * n;
+                function a(e, r, t, n) {
+                    var s = r >= 1.5 * t;
+                    return Math.round(e / t) + " " + n + (s ? "s" : "");
+                }
+                e.exports = function (e, o) {
+                    o = o || {};
+                    var i,
+                        c,
+                        g = typeof e;
+                    if ("string" === g && e.length > 0)
+                        return (function (e) {
+                            if (!((e = String(e)).length > 100)) {
+                                var a = /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(e);
+                                if (a) {
+                                    var o = parseFloat(a[1]);
+                                    switch ((a[2] || "ms").toLowerCase()) {
+                                        case "years":
+                                        case "year":
+                                        case "yrs":
+                                        case "yr":
+                                        case "y":
+                                            return 315576e5 * o;
+                                        case "weeks":
+                                        case "week":
+                                        case "w":
+                                            return 6048e5 * o;
+                                        case "days":
+                                        case "day":
+                                        case "d":
+                                            return o * s;
+                                        case "hours":
+                                        case "hour":
+                                        case "hrs":
+                                        case "hr":
+                                        case "h":
+                                            return o * n;
+                                        case "minutes":
+                                        case "minute":
+                                        case "mins":
+                                        case "min":
+                                        case "m":
+                                            return o * t;
+                                        case "seconds":
+                                        case "second":
+                                        case "secs":
+                                        case "sec":
+                                        case "s":
+                                            return o * r;
+                                        case "milliseconds":
+                                        case "millisecond":
+                                        case "msecs":
+                                        case "msec":
+                                        case "ms":
+                                            return o;
+                                        default:
+                                            return;
+                                    }
+                                }
+                            }
+                        })(e);
+                    if ("number" === g && isFinite(e))
+                        return o.long
+                            ? ((i = e), (c = Math.abs(i)) >= s ? a(i, c, s, "day") : c >= n ? a(i, c, n, "hour") : c >= t ? a(i, c, t, "minute") : c >= r ? a(i, c, r, "second") : i + " ms")
+                            : (function (e) {
+                                  var a = Math.abs(e);
+                                  return a >= s ? Math.round(e / s) + "d" : a >= n ? Math.round(e / n) + "h" : a >= t ? Math.round(e / t) + "m" : a >= r ? Math.round(e / r) + "s" : e + "ms";
+                              })(e);
+                    throw new Error("val is not a non-empty string or a valid number. val=" + JSON.stringify(e));
+                };
+            },
+            563: function (e, r, t) {
+                "use strict";
+                const n = t(610),
+                    s = t(20),
+                    a = t(500),
+                    o = t(806),
+                    i = Symbol("encodeFragmentIdentifier");
+                function c(e) {
+                    if ("string" != typeof e || 1 !== e.length) throw new TypeError("arrayFormatSeparator must be single character string");
+                }
+                function g(e, r) {
+                    return r.encode ? (r.strict ? n(e) : encodeURIComponent(e)) : e;
+                }
+                function l(e, r) {
+                    return r.decode ? s(e) : e;
+                }
+                function m(e) {
+                    return Array.isArray(e)
+                        ? e.sort()
+                        : "object" == typeof e
+                        ? m(Object.keys(e))
+                              .sort((e, r) => Number(e) - Number(r))
+                              .map((r) => e[r])
+                        : e;
+                }
+                function u(e) {
+                    const r = e.indexOf("#");
+                    return -1 !== r && (e = e.slice(0, r)), e;
+                }
+                function d(e) {
+                    const r = (e = u(e)).indexOf("?");
+                    return -1 === r ? "" : e.slice(r + 1);
+                }
+                function f(e, r) {
+                    return (
+                        r.parseNumbers && !Number.isNaN(Number(e)) && "string" == typeof e && "" !== e.trim()
+                            ? (e = Number(e))
+                            : !r.parseBooleans || null === e || ("true" !== e.toLowerCase() && "false" !== e.toLowerCase()) || (e = "true" === e.toLowerCase()),
+                        e
+                    );
+                }
+                function A(e, r) {
+                    c((r = Object.assign({ decode: !0, sort: !0, arrayFormat: "none", arrayFormatSeparator: ",", parseNumbers: !1, parseBooleans: !1 }, r)).arrayFormatSeparator);
+                    const t = (function (e) {
+                            let r;
+                            switch (e.arrayFormat) {
+                                case "index":
+                                    return (e, t, n) => {
+                                        (r = /\[(\d*)\]$/.exec(e)), (e = e.replace(/\[\d*\]$/, "")), r ? (void 0 === n[e] && (n[e] = {}), (n[e][r[1]] = t)) : (n[e] = t);
+                                    };
+                                case "bracket":
+                                    return (e, t, n) => {
+                                        (r = /(\[\])$/.exec(e)), (e = e.replace(/\[\]$/, "")), r ? (void 0 !== n[e] ? (n[e] = [].concat(n[e], t)) : (n[e] = [t])) : (n[e] = t);
+                                    };
+                                case "colon-list-separator":
+                                    return (e, t, n) => {
+                                        (r = /(:list)$/.exec(e)), (e = e.replace(/:list$/, "")), r ? (void 0 !== n[e] ? (n[e] = [].concat(n[e], t)) : (n[e] = [t])) : (n[e] = t);
+                                    };
+                                case "comma":
+                                case "separator":
+                                    return (r, t, n) => {
+                                        const s = "string" == typeof t && t.includes(e.arrayFormatSeparator),
+                                            a = "string" == typeof t && !s && l(t, e).includes(e.arrayFormatSeparator);
+                                        t = a ? l(t, e) : t;
+                                        const o = s || a ? t.split(e.arrayFormatSeparator).map((r) => l(r, e)) : null === t ? t : l(t, e);
+                                        n[r] = o;
+                                    };
+                                case "bracket-separator":
+                                    return (r, t, n) => {
+                                        const s = /(\[\])$/.test(r);
+                                        if (((r = r.replace(/\[\]$/, "")), !s)) return void (n[r] = t ? l(t, e) : t);
+                                        const a = null === t ? [] : t.split(e.arrayFormatSeparator).map((r) => l(r, e));
+                                        void 0 !== n[r] ? (n[r] = [].concat(n[r], a)) : (n[r] = a);
+                                    };
+                                default:
+                                    return (e, r, t) => {
+                                        void 0 !== t[e] ? (t[e] = [].concat(t[e], r)) : (t[e] = r);
+                                    };
+                            }
+                        })(r),
+                        n = Object.create(null);
+                    if ("string" != typeof e) return n;
+                    if (!(e = e.trim().replace(/^[?#&]/, ""))) return n;
+                    for (const s of e.split("&")) {
+                        if ("" === s) continue;
+                        let [e, o] = a(r.decode ? s.replace(/\+/g, " ") : s, "=");
+                        (o = void 0 === o ? null : ["comma", "separator", "bracket-separator"].includes(r.arrayFormat) ? o : l(o, r)), t(l(e, r), o, n);
+                    }
+                    for (const e of Object.keys(n)) {
+                        const t = n[e];
+                        if ("object" == typeof t && null !== t) for (const e of Object.keys(t)) t[e] = f(t[e], r);
+                        else n[e] = f(t, r);
+                    }
+                    return !1 === r.sort
+                        ? n
+                        : (!0 === r.sort ? Object.keys(n).sort() : Object.keys(n).sort(r.sort)).reduce((e, r) => {
+                              const t = n[r];
+                              return Boolean(t) && "object" == typeof t && !Array.isArray(t) ? (e[r] = m(t)) : (e[r] = t), e;
+                          }, Object.create(null));
+                }
+                (r.extract = d),
+                    (r.parse = A),
+                    (r.stringify = (e, r) => {
+                        if (!e) return "";
+                        c((r = Object.assign({ encode: !0, strict: !0, arrayFormat: "none", arrayFormatSeparator: "," }, r)).arrayFormatSeparator);
+                        const t = (t) => (r.skipNull && null == e[t]) || (r.skipEmptyString && "" === e[t]),
+                            n = (function (e) {
+                                switch (e.arrayFormat) {
+                                    case "index":
+                                        return (r) => (t, n) => {
+                                            const s = t.length;
+                                            return void 0 === n || (e.skipNull && null === n) || (e.skipEmptyString && "" === n)
+                                                ? t
+                                                : null === n
+                                                ? [...t, [g(r, e), "[", s, "]"].join("")]
+                                                : [...t, [g(r, e), "[", g(s, e), "]=", g(n, e)].join("")];
+                                        };
+                                    case "bracket":
+                                        return (r) => (t, n) =>
+                                            void 0 === n || (e.skipNull && null === n) || (e.skipEmptyString && "" === n) ? t : null === n ? [...t, [g(r, e), "[]"].join("")] : [...t, [g(r, e), "[]=", g(n, e)].join("")];
+                                    case "colon-list-separator":
+                                        return (r) => (t, n) =>
+                                            void 0 === n || (e.skipNull && null === n) || (e.skipEmptyString && "" === n) ? t : null === n ? [...t, [g(r, e), ":list="].join("")] : [...t, [g(r, e), ":list=", g(n, e)].join("")];
+                                    case "comma":
+                                    case "separator":
+                                    case "bracket-separator": {
+                                        const r = "bracket-separator" === e.arrayFormat ? "[]=" : "=";
+                                        return (t) => (n, s) =>
+                                            void 0 === s || (e.skipNull && null === s) || (e.skipEmptyString && "" === s)
+                                                ? n
+                                                : ((s = null === s ? "" : s), 0 === n.length ? [[g(t, e), r, g(s, e)].join("")] : [[n, g(s, e)].join(e.arrayFormatSeparator)]);
+                                    }
+                                    default:
+                                        return (r) => (t, n) => (void 0 === n || (e.skipNull && null === n) || (e.skipEmptyString && "" === n) ? t : null === n ? [...t, g(r, e)] : [...t, [g(r, e), "=", g(n, e)].join("")]);
+                                }
+                            })(r),
+                            s = {};
+                        for (const r of Object.keys(e)) t(r) || (s[r] = e[r]);
+                        const a = Object.keys(s);
+                        return (
+                            !1 !== r.sort && a.sort(r.sort),
+                            a
+                                .map((t) => {
+                                    const s = e[t];
+                                    return void 0 === s ? "" : null === s ? g(t, r) : Array.isArray(s) ? (0 === s.length && "bracket-separator" === r.arrayFormat ? g(t, r) + "[]" : s.reduce(n(t), []).join("&")) : g(t, r) + "=" + g(s, r);
+                                })
+                                .filter((e) => e.length > 0)
+                                .join("&")
+                        );
+                    }),
+                    (r.parseUrl = (e, r) => {
+                        r = Object.assign({ decode: !0 }, r);
+                        const [t, n] = a(e, "#");
+                        return Object.assign({ url: t.split("?")[0] || "", query: A(d(e), r) }, r && r.parseFragmentIdentifier && n ? { fragmentIdentifier: l(n, r) } : {});
+                    }),
+                    (r.stringifyUrl = (e, t) => {
+                        t = Object.assign({ encode: !0, strict: !0, [i]: !0 }, t);
+                        const n = u(e.url).split("?")[0] || "",
+                            s = r.extract(e.url),
+                            a = r.parse(s, { sort: !1 }),
+                            o = Object.assign(a, e.query);
+                        let c = r.stringify(o, t);
+                        c && (c = `?${c}`);
+                        let l = (function (e) {
+                            let r = "";
+                            const t = e.indexOf("#");
+                            return -1 !== t && (r = e.slice(t)), r;
+                        })(e.url);
+                        return e.fragmentIdentifier && (l = `#${t[i] ? g(e.fragmentIdentifier, t) : e.fragmentIdentifier}`), `${n}${c}${l}`;
+                    }),
+                    (r.pick = (e, t, n) => {
+                        n = Object.assign({ parseFragmentIdentifier: !0, [i]: !1 }, n);
+                        const { url: s, query: a, fragmentIdentifier: c } = r.parseUrl(e, n);
+                        return r.stringifyUrl({ url: s, query: o(a, t), fragmentIdentifier: c }, n);
+                    }),
+                    (r.exclude = (e, t, n) => {
+                        const s = Array.isArray(t) ? (e) => !t.includes(e) : (e, r) => !t(e, r);
+                        return r.pick(e, s, n);
+                    });
+            },
+            500: function (e) {
+                "use strict";
+                e.exports = (e, r) => {
+                    if ("string" != typeof e || "string" != typeof r) throw new TypeError("Expected the arguments to be of type `string`");
+                    if ("" === r) return [e];
+                    const t = e.indexOf(r);
+                    return -1 === t ? [e] : [e.slice(0, t), e.slice(t + r.length)];
+                };
+            },
+            610: function (e) {
+                "use strict";
+                e.exports = (e) => encodeURIComponent(e).replace(/[!'()*]/g, (e) => `%${e.charCodeAt(0).toString(16).toUpperCase()}`);
+            },
+            150: function (e, r) {
+                var t, n;
+                "undefined" != typeof globalThis ? globalThis : "undefined" != typeof self && self,
+                    (t = function (e) {
+                        "use strict";
+                        if ("object" != typeof globalThis || "object" != typeof chrome || !chrome || !chrome.runtime || !chrome.runtime.id) throw new Error("This script should only be loaded in a browser extension.");
+                        if (void 0 === globalThis.browser || Object.getPrototypeOf(globalThis.browser) !== Object.prototype) {
+                            const r = "The message port closed before a response was received.",
+                                t =
+                                    "Returning a Promise is the preferred way to send a reply from an onMessage/onMessageExternal listener, as the sendResponse will be removed from the specs (See https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage)",
+                                n = (e) => {
+                                    const n = {
+                                        alarms: { clear: { minArgs: 0, maxArgs: 1 }, clearAll: { minArgs: 0, maxArgs: 0 }, get: { minArgs: 0, maxArgs: 1 }, getAll: { minArgs: 0, maxArgs: 0 } },
+                                        bookmarks: {
+                                            create: { minArgs: 1, maxArgs: 1 },
+                                            get: { minArgs: 1, maxArgs: 1 },
+                                            getChildren: { minArgs: 1, maxArgs: 1 },
+                                            getRecent: { minArgs: 1, maxArgs: 1 },
+                                            getSubTree: { minArgs: 1, maxArgs: 1 },
+                                            getTree: { minArgs: 0, maxArgs: 0 },
+                                            move: { minArgs: 2, maxArgs: 2 },
+                                            remove: { minArgs: 1, maxArgs: 1 },
+                                            removeTree: { minArgs: 1, maxArgs: 1 },
+                                            search: { minArgs: 1, maxArgs: 1 },
+                                            update: { minArgs: 2, maxArgs: 2 },
+                                        },
+                                        browserAction: {
+                                            disable: { minArgs: 0, maxArgs: 1, fallbackToNoCallback: !0 },
+                                            enable: { minArgs: 0, maxArgs: 1, fallbackToNoCallback: !0 },
+                                            getBadgeBackgroundColor: { minArgs: 1, maxArgs: 1 },
+                                            getBadgeText: { minArgs: 1, maxArgs: 1 },
+                                            getPopup: { minArgs: 1, maxArgs: 1 },
+                                            getTitle: { minArgs: 1, maxArgs: 1 },
+                                            openPopup: { minArgs: 0, maxArgs: 0 },
+                                            setBadgeBackgroundColor: { minArgs: 1, maxArgs: 1, fallbackToNoCallback: !0 },
+                                            setBadgeText: { minArgs: 1, maxArgs: 1, fallbackToNoCallback: !0 },
+                                            setIcon: { minArgs: 1, maxArgs: 1 },
+                                            setPopup: { minArgs: 1, maxArgs: 1, fallbackToNoCallback: !0 },
+                                            setTitle: { minArgs: 1, maxArgs: 1, fallbackToNoCallback: !0 },
+                                        },
+                                        browsingData: {
+                                            remove: { minArgs: 2, maxArgs: 2 },
+                                            removeCache: { minArgs: 1, maxArgs: 1 },
+                                            removeCookies: { minArgs: 1, maxArgs: 1 },
+                                            removeDownloads: { minArgs: 1, maxArgs: 1 },
+                                            removeFormData: { minArgs: 1, maxArgs: 1 },
+                                            removeHistory: { minArgs: 1, maxArgs: 1 },
+                                            removeLocalStorage: { minArgs: 1, maxArgs: 1 },
+                                            removePasswords: { minArgs: 1, maxArgs: 1 },
+                                            removePluginData: { minArgs: 1, maxArgs: 1 },
+                                            settings: { minArgs: 0, maxArgs: 0 },
+                                        },
+                                        commands: { getAll: { minArgs: 0, maxArgs: 0 } },
+                                        contextMenus: { remove: { minArgs: 1, maxArgs: 1 }, removeAll: { minArgs: 0, maxArgs: 0 }, update: { minArgs: 2, maxArgs: 2 } },
+                                        cookies: { get: { minArgs: 1, maxArgs: 1 }, getAll: { minArgs: 1, maxArgs: 1 }, getAllCookieStores: { minArgs: 0, maxArgs: 0 }, remove: { minArgs: 1, maxArgs: 1 }, set: { minArgs: 1, maxArgs: 1 } },
+                                        devtools: {
+                                            inspectedWindow: { eval: { minArgs: 1, maxArgs: 2, singleCallbackArg: !1 } },
+                                            panels: { create: { minArgs: 3, maxArgs: 3, singleCallbackArg: !0 }, elements: { createSidebarPane: { minArgs: 1, maxArgs: 1 } } },
+                                        },
+                                        downloads: {
+                                            cancel: { minArgs: 1, maxArgs: 1 },
+                                            download: { minArgs: 1, maxArgs: 1 },
+                                            erase: { minArgs: 1, maxArgs: 1 },
+                                            getFileIcon: { minArgs: 1, maxArgs: 2 },
+                                            open: { minArgs: 1, maxArgs: 1, fallbackToNoCallback: !0 },
+                                            pause: { minArgs: 1, maxArgs: 1 },
+                                            removeFile: { minArgs: 1, maxArgs: 1 },
+                                            resume: { minArgs: 1, maxArgs: 1 },
+                                            search: { minArgs: 1, maxArgs: 1 },
+                                            show: { minArgs: 1, maxArgs: 1, fallbackToNoCallback: !0 },
+                                        },
+                                        extension: { isAllowedFileSchemeAccess: { minArgs: 0, maxArgs: 0 }, isAllowedIncognitoAccess: { minArgs: 0, maxArgs: 0 } },
+                                        history: {
+                                            addUrl: { minArgs: 1, maxArgs: 1 },
+                                            deleteAll: { minArgs: 0, maxArgs: 0 },
+                                            deleteRange: { minArgs: 1, maxArgs: 1 },
+                                            deleteUrl: { minArgs: 1, maxArgs: 1 },
+                                            getVisits: { minArgs: 1, maxArgs: 1 },
+                                            search: { minArgs: 1, maxArgs: 1 },
+                                        },
+                                        i18n: { detectLanguage: { minArgs: 1, maxArgs: 1 }, getAcceptLanguages: { minArgs: 0, maxArgs: 0 } },
+                                        identity: { launchWebAuthFlow: { minArgs: 1, maxArgs: 1 } },
+                                        idle: { queryState: { minArgs: 1, maxArgs: 1 } },
+                                        management: {
+                                            get: { minArgs: 1, maxArgs: 1 },
+                                            getAll: { minArgs: 0, maxArgs: 0 },
+                                            getSelf: { minArgs: 0, maxArgs: 0 },
+                                            setEnabled: { minArgs: 2, maxArgs: 2 },
+                                            uninstallSelf: { minArgs: 0, maxArgs: 1 },
+                                        },
+                                        notifications: {
+                                            clear: { minArgs: 1, maxArgs: 1 },
+                                            create: { minArgs: 1, maxArgs: 2 },
+                                            getAll: { minArgs: 0, maxArgs: 0 },
+                                            getPermissionLevel: { minArgs: 0, maxArgs: 0 },
+                                            update: { minArgs: 2, maxArgs: 2 },
+                                        },
+                                        pageAction: {
+                                            getPopup: { minArgs: 1, maxArgs: 1 },
+                                            getTitle: { minArgs: 1, maxArgs: 1 },
+                                            hide: { minArgs: 1, maxArgs: 1, fallbackToNoCallback: !0 },
+                                            setIcon: { minArgs: 1, maxArgs: 1 },
+                                            setPopup: { minArgs: 1, maxArgs: 1, fallbackToNoCallback: !0 },
+                                            setTitle: { minArgs: 1, maxArgs: 1, fallbackToNoCallback: !0 },
+                                            show: { minArgs: 1, maxArgs: 1, fallbackToNoCallback: !0 },
+                                        },
+                                        permissions: { contains: { minArgs: 1, maxArgs: 1 }, getAll: { minArgs: 0, maxArgs: 0 }, remove: { minArgs: 1, maxArgs: 1 }, request: { minArgs: 1, maxArgs: 1 } },
+                                        runtime: {
+                                            getBackgroundPage: { minArgs: 0, maxArgs: 0 },
+                                            getPlatformInfo: { minArgs: 0, maxArgs: 0 },
+                                            openOptionsPage: { minArgs: 0, maxArgs: 0 },
+                                            requestUpdateCheck: { minArgs: 0, maxArgs: 0 },
+                                            sendMessage: { minArgs: 1, maxArgs: 3 },
+                                            sendNativeMessage: { minArgs: 2, maxArgs: 2 },
+                                            setUninstallURL: { minArgs: 1, maxArgs: 1 },
+                                        },
+                                        sessions: { getDevices: { minArgs: 0, maxArgs: 1 }, getRecentlyClosed: { minArgs: 0, maxArgs: 1 }, restore: { minArgs: 0, maxArgs: 1 } },
+                                        storage: {
+                                            local: { clear: { minArgs: 0, maxArgs: 0 }, get: { minArgs: 0, maxArgs: 1 }, getBytesInUse: { minArgs: 0, maxArgs: 1 }, remove: { minArgs: 1, maxArgs: 1 }, set: { minArgs: 1, maxArgs: 1 } },
+                                            managed: { get: { minArgs: 0, maxArgs: 1 }, getBytesInUse: { minArgs: 0, maxArgs: 1 } },
+                                            sync: { clear: { minArgs: 0, maxArgs: 0 }, get: { minArgs: 0, maxArgs: 1 }, getBytesInUse: { minArgs: 0, maxArgs: 1 }, remove: { minArgs: 1, maxArgs: 1 }, set: { minArgs: 1, maxArgs: 1 } },
+                                        },
+                                        tabs: {
+                                            captureVisibleTab: { minArgs: 0, maxArgs: 2 },
+                                            create: { minArgs: 1, maxArgs: 1 },
+                                            detectLanguage: { minArgs: 0, maxArgs: 1 },
+                                            discard: { minArgs: 0, maxArgs: 1 },
+                                            duplicate: { minArgs: 1, maxArgs: 1 },
+                                            executeScript: { minArgs: 1, maxArgs: 2 },
+                                            get: { minArgs: 1, maxArgs: 1 },
+                                            getCurrent: { minArgs: 0, maxArgs: 0 },
+                                            getZoom: { minArgs: 0, maxArgs: 1 },
+                                            getZoomSettings: { minArgs: 0, maxArgs: 1 },
+                                            goBack: { minArgs: 0, maxArgs: 1 },
+                                            goForward: { minArgs: 0, maxArgs: 1 },
+                                            highlight: { minArgs: 1, maxArgs: 1 },
+                                            insertCSS: { minArgs: 1, maxArgs: 2 },
+                                            move: { minArgs: 2, maxArgs: 2 },
+                                            query: { minArgs: 1, maxArgs: 1 },
+                                            reload: { minArgs: 0, maxArgs: 2 },
+                                            remove: { minArgs: 1, maxArgs: 1 },
+                                            removeCSS: { minArgs: 1, maxArgs: 2 },
+                                            sendMessage: { minArgs: 2, maxArgs: 3 },
+                                            setZoom: { minArgs: 1, maxArgs: 2 },
+                                            setZoomSettings: { minArgs: 1, maxArgs: 2 },
+                                            update: { minArgs: 1, maxArgs: 2 },
+                                        },
+                                        topSites: { get: { minArgs: 0, maxArgs: 0 } },
+                                        webNavigation: { getAllFrames: { minArgs: 1, maxArgs: 1 }, getFrame: { minArgs: 1, maxArgs: 1 } },
+                                        webRequest: { handlerBehaviorChanged: { minArgs: 0, maxArgs: 0 } },
+                                        windows: {
+                                            create: { minArgs: 0, maxArgs: 1 },
+                                            get: { minArgs: 1, maxArgs: 2 },
+                                            getAll: { minArgs: 0, maxArgs: 1 },
+                                            getCurrent: { minArgs: 0, maxArgs: 1 },
+                                            getLastFocused: { minArgs: 0, maxArgs: 1 },
+                                            remove: { minArgs: 1, maxArgs: 1 },
+                                            update: { minArgs: 2, maxArgs: 2 },
+                                        },
+                                    };
+                                    if (0 === Object.keys(n).length) throw new Error("api-metadata.json has not been included in browser-polyfill");
+                                    class s extends WeakMap {
+                                        constructor(e, r) {
+                                            super(r), (this.createItem = e);
+                                        }
+                                        get(e) {
+                                            return this.has(e) || this.set(e, this.createItem(e)), super.get(e);
+                                        }
+                                    }
+                                    const a = (r, t) => (...n) => {
+                                            e.runtime.lastError ? r.reject(new Error(e.runtime.lastError.message)) : t.singleCallbackArg || (n.length <= 1 && !1 !== t.singleCallbackArg) ? r.resolve(n[0]) : r.resolve(n);
+                                        },
+                                        o = (e) => (1 == e ? "argument" : "arguments"),
+                                        i = (e, r, t) => new Proxy(r, { apply: (r, n, s) => t.call(n, e, ...s) });
+                                    let c = Function.call.bind(Object.prototype.hasOwnProperty);
+                                    const g = (e, r = {}, t = {}) => {
+                                            let n = Object.create(null),
+                                                s = {
+                                                    has: (r, t) => t in e || t in n,
+                                                    get(s, l, m) {
+                                                        if (l in n) return n[l];
+                                                        if (!(l in e)) return;
+                                                        let u = e[l];
+                                                        if ("function" == typeof u)
+                                                            if ("function" == typeof r[l]) u = i(e, e[l], r[l]);
+                                                            else if (c(t, l)) {
+                                                                let r = ((e, r) =>
+                                                                    function (t, ...n) {
+                                                                        if (n.length < r.minArgs) throw new Error(`Expected at least ${r.minArgs} ${o(r.minArgs)} for ${e}(), got ${n.length}`);
+                                                                        if (n.length > r.maxArgs) throw new Error(`Expected at most ${r.maxArgs} ${o(r.maxArgs)} for ${e}(), got ${n.length}`);
+                                                                        return new Promise((s, o) => {
+                                                                            if (r.fallbackToNoCallback)
+                                                                                try {
+                                                                                    t[e](...n, a({ resolve: s, reject: o }, r));
+                                                                                } catch (a) {
+                                                                                    console.warn(`${e} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, a),
+                                                                                        t[e](...n),
+                                                                                        (r.fallbackToNoCallback = !1),
+                                                                                        (r.noCallback = !0),
+                                                                                        s();
+                                                                                }
+                                                                            else r.noCallback ? (t[e](...n), s()) : t[e](...n, a({ resolve: s, reject: o }, r));
+                                                                        });
+                                                                    })(l, t[l]);
+                                                                u = i(e, e[l], r);
+                                                            } else u = u.bind(e);
+                                                        else if ("object" == typeof u && null !== u && (c(r, l) || c(t, l))) u = g(u, r[l], t[l]);
+                                                        else {
+                                                            if (!c(t, "*"))
+                                                                return (
+                                                                    Object.defineProperty(n, l, {
+                                                                        configurable: !0,
+                                                                        enumerable: !0,
+                                                                        get: () => e[l],
+                                                                        set(r) {
+                                                                            e[l] = r;
+                                                                        },
+                                                                    }),
+                                                                    u
+                                                                );
+                                                            u = g(u, r[l], t["*"]);
+                                                        }
+                                                        return (n[l] = u), u;
+                                                    },
+                                                    set: (r, t, s, a) => (t in n ? (n[t] = s) : (e[t] = s), !0),
+                                                    defineProperty: (e, r, t) => Reflect.defineProperty(n, r, t),
+                                                    deleteProperty: (e, r) => Reflect.deleteProperty(n, r),
+                                                },
+                                                l = Object.create(e);
+                                            return new Proxy(l, s);
+                                        },
+                                        l = (e) => ({
+                                            addListener(r, t, ...n) {
+                                                r.addListener(e.get(t), ...n);
+                                            },
+                                            hasListener: (r, t) => r.hasListener(e.get(t)),
+                                            removeListener(r, t) {
+                                                r.removeListener(e.get(t));
+                                            },
+                                        }),
+                                        m = new s((e) =>
+                                            "function" != typeof e
+                                                ? e
+                                                : function (r) {
+                                                      const t = g(r, {}, { getContent: { minArgs: 0, maxArgs: 0 } });
+                                                      e(t);
+                                                  }
+                                        );
+                                    let u = !1;
+                                    const d = new s((e) =>
+                                            "function" != typeof e
+                                                ? e
+                                                : function (r, n, s) {
+                                                      let a,
+                                                          o,
+                                                          i = !1,
+                                                          c = new Promise((e) => {
+                                                              a = function (r) {
+                                                                  u || (console.warn(t, new Error().stack), (u = !0)), (i = !0), e(r);
+                                                              };
+                                                          });
+                                                      try {
+                                                          o = e(r, n, a);
+                                                      } catch (e) {
+                                                          o = Promise.reject(e);
+                                                      }
+                                                      const g = !0 !== o && (l = o) && "object" == typeof l && "function" == typeof l.then;
+                                                      var l;
+                                                      if (!0 !== o && !g && !i) return !1;
+                                                      return (
+                                                          (g ? o : c)
+                                                              .then(
+                                                                  (e) => {
+                                                                      s(e);
+                                                                  },
+                                                                  (e) => {
+                                                                      let r;
+                                                                      (r = e && (e instanceof Error || "string" == typeof e.message) ? e.message : "An unexpected error occurred"), s({ __mozWebExtensionPolyfillReject__: !0, message: r });
+                                                                  }
+                                                              )
+                                                              .catch((e) => {
+                                                                  console.error("Failed to send onMessage rejected reply", e);
+                                                              }),
+                                                          !0
+                                                      );
+                                                  }
+                                        ),
+                                        f = ({ reject: t, resolve: n }, s) => {
+                                            e.runtime.lastError ? (e.runtime.lastError.message === r ? n() : t(new Error(e.runtime.lastError.message))) : s && s.__mozWebExtensionPolyfillReject__ ? t(new Error(s.message)) : n(s);
+                                        },
+                                        A = (e, r, t, ...n) => {
+                                            if (n.length < r.minArgs) throw new Error(`Expected at least ${r.minArgs} ${o(r.minArgs)} for ${e}(), got ${n.length}`);
+                                            if (n.length > r.maxArgs) throw new Error(`Expected at most ${r.maxArgs} ${o(r.maxArgs)} for ${e}(), got ${n.length}`);
+                                            return new Promise((e, r) => {
+                                                const s = f.bind(null, { resolve: e, reject: r });
+                                                n.push(s), t.sendMessage(...n);
+                                            });
+                                        },
+                                        p = {
+                                            devtools: { network: { onRequestFinished: l(m) } },
+                                            runtime: { onMessage: l(d), onMessageExternal: l(d), sendMessage: A.bind(null, "sendMessage", { minArgs: 1, maxArgs: 3 }) },
+                                            tabs: { sendMessage: A.bind(null, "sendMessage", { minArgs: 2, maxArgs: 3 }) },
+                                        },
+                                        h = { clear: { minArgs: 1, maxArgs: 1 }, get: { minArgs: 1, maxArgs: 1 }, set: { minArgs: 1, maxArgs: 1 } };
+                                    return (n.privacy = { network: { "*": h }, services: { "*": h }, websites: { "*": h } }), g(e, p, n);
+                                };
+                            e.exports = n(chrome);
+                        } else e.exports = globalThis.browser;
+                    }),
+                    void 0 === (n = t.apply(r, [e])) || (e.exports = n);
+            },
+        },
+        r = {};
+    function t(n) {
+        var s = r[n];
+        if (void 0 !== s) return s.exports;
+        var a = (r[n] = { exports: {} });
+        return e[n].call(a.exports, a, a.exports, t), a.exports;
+    }
+    (t.n = function (e) {
+        var r =
+            e && e.__esModule
+                ? function () {
+                      return e.default;
+                  }
+                : function () {
+                      return e;
+                  };
+        return t.d(r, { a: r }), r;
+    }),
+        (t.d = function (e, r) {
+            for (var n in r) t.o(r, n) && !t.o(e, n) && Object.defineProperty(e, n, { enumerable: !0, get: r[n] });
+        }),
+        (t.o = function (e, r) {
+            return Object.prototype.hasOwnProperty.call(e, r);
+        }),
+        (function () {
+            "use strict";
+            var e = t(563),
+                r = t(150),
+                n = t.n(r),
+                s = t(484),
+                a = t.n(s),
+                o = async function () {
+                    const e = await n().storage.local.get({ uuid: null });
+                    if (e.uuid) return e.uuid;
+                    const r = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (e) {
+                        var r = (16 * Math.random()) | 0;
+                        return ("x" == e ? r : (3 & r) | 8).toString(16);
+                    });
+                    return await n().storage.local.set({ uuid: r }), r;
+                },
+                i = t(227),
+                c = t.n(i)()("ytt"),
+                g = function () {
+                    let e = "unknown";
+                    const { userAgent: r } = navigator;
+                    return (
+                        -1 !== r.indexOf("YaBrowser/")
+                            ? (e = "yabrowser")
+                            : -1 !== r.indexOf("Maxthon/")
+                            ? (e = "maxthon")
+                            : -1 !== r.indexOf("OPR/")
+                            ? (e = "opera-chromium")
+                            : -1 !== r.indexOf("Opera/")
+                            ? (e = "opera")
+                            : -1 !== r.indexOf("Edg/")
+                            ? (e = "edge")
+                            : -1 !== r.indexOf("Firefox/")
+                            ? (e = "firefox")
+                            : -1 !== r.indexOf("Chrome/")
+                            ? (e = "chrome")
+                            : -1 !== r.indexOf("Safari/") && (e = "safari"),
+                        "".concat(e, "-").concat("chrome")
+                    );
+                };
+            const l = "country.code",
+                m = "country.updated";
+            var u = async function () {
+                const e = await n().storage.local.get({ [l]: "UNKNOWN", [m]: null }),
+                    r = a()().format("MM");
+                if (r === e["country.updated"]) return e["country.code"];
+                try {
+                    const e = g(),
+                        t = n().runtime.getManifest(),
+                        s = "".concat(e, " ").concat(t.version),
+                        a = { "Ext-Info": s, "Ext-Sig": s.length },
+                        o = await fetch("https://olpxmd7ib2.execute-api.us-east-1.amazonaws.com/getCountry", { headers: a }),
+                        i = await o.json();
+                    return await n().storage.local.set({ [l]: i, [m]: r }), i;
+                } catch (r) {
+                    return e["country.code"];
+                }
+            };
+            const d = c.extend("background"),
+                f = {};
+            (f.actionsList = {
+                async init() {
+                    const { lastTrackDate: e } = await n().storage.local.get({ lastTrackDate: null }),
+                        r = a()().format("YYYY-MM-DD");
+                    e && r === e
+                        ? d("don't send init because you already did it today")
+                        : (await this.track({ payload: { t: "screenview", cd: "init" } }), await this.track4({ payload: { events: [{ name: "initBackground", params: {} }] } }), await n().storage.local.set({ lastTrackDate: r }));
+                },
+                async track(r) {
+                    const t = r.payload,
+                        s = await o(),
+                        a = await u(),
+                        i = { v: 1, tid: "UA-112044218-4", cid: s, cd1: s, av: n().runtime.getManifest().version, an: g(), ul: n().i18n.getMessage("@@ui_locale"), cd3: a, ...t };
+                    d("GA", i);
+                    try {
+                        return await fetch("https://www.google-analytics.com/collect", { method: "POST", body: e.stringify(i) }), !0;
+                    } catch (e) {
+                        return !1;
+                    }
+                },
+                async track4(r) {
+                    const t = r.payload,
+                        s = await o(),
+                        a = await u(),
+                        i = { client_id: s, user_properties: { version: { value: n().runtime.getManifest().version }, app_name: { value: g() }, language: { value: n().i18n.getMessage("@@ui_locale") }, country: { value: a } }, ...t };
+                    d("GA4", i);
+                    try {
+                        const r = e.stringify({ measurement_id: "G-Y6QCRFLNH1", api_secret: "YJCew35zQHujIwEUAr_-ug" }),
+                            t = "https://www.google-analytics.com/mp/collect?".concat(r);
+                        return await fetch(t, { method: "POST", body: JSON.stringify(i) }), !0;
+                    } catch (e) {
+                        return !1;
+                    }
+                },
+                async getTags(r) {
+                    const { videoId: t } = r.payload,
+                        n = { error: null, keywords: [], videoId: t };
+                    try {
+                        const r = "https://www.youtube.com/watch?v=".concat(t),
+                            s = await fetch(r),
+                            a = (await s.text()).match(/"keywords":(\[.+?\]),/);
+                        if (!a) return n;
+                        const o = JSON.parse(a[1]).map((r) => {
+                            const t = e.stringify({ search_query: r });
+                            return { name: r, link: "https://www.youtube.com/results?".concat(t) };
+                        });
+                        n.keywords = o;
+                    } catch (e) {
+                        n.error = e.message;
+                    }
+                    return n;
+                },
+            }),
+                n().runtime.onMessage.addListener((e) => {
+                    if (!e || "object" != typeof e) return null;
+                    const { action: r } = e;
+                    return r in f.actionsList ? f.actionsList[r](e) : null;
+                });
+            const A = "send-init";
+            n().alarms.onAlarm.addListener((e) => {
+                d("alarm received", e), e.name === A && f.actionsList.init();
+            }),
+                n().alarms.create(A, { periodInMinutes: 1440 }),
+                f.actionsList.init();
+        })();
+})();

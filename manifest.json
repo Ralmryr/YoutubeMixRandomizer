@@ -3,7 +3,7 @@
     "manifest_version": 3,
     "version": "0.1",
     "description": "A small chrome extension to randomize the play order of musics in hours long mix",
-    "permissions": ["storage", "tabs", "activeTab", "scripting"],
+    "permissions": ["storage", "tabs", "activeTab", "scripting", "webNavigation"],
     "host_permissions": ["https://*.youtube.com/*"],
     "content_scripts": [
         {
@@ -15,11 +15,12 @@
         "service_worker": "background.js"
     },
     "action": {
-        "default_icon": {              
-          "16": "images/icons8-youtube-16.png",
-          "24": "images/icons8-youtube-24.png",
-          "32": "images/icons8-youtube-32.png"
+        "default_icon": {
+          "16": "icons/icons8-youtube-16.png",
+          "24": "icons/icons8-youtube-24.png",
+          "32": "icons/icons8-youtube-32.png"
         },
-        "default_title": "Click Me"
+        "default_title": "Click Me",
+        "default_popup": "popup/popup.html"
       }
 }

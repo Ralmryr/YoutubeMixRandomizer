@@ -1,0 +1,49 @@
+body {
+    margin: 1em;
+    font-family: Mukta;
+}
+
+section.media-player {
+    display: flex;
+    justify-content: center;
+    .button {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3em;
+        height: 3em;
+        margin: 0 0.6em;
+            .circle-hover {
+                position: absolute;
+                margin: auto;
+                z-index: 0;
+                border-radius: 50%;
+                width: 0%;
+                height: 0%;
+                background: rgb(224, 224, 224);
+                transition: width 0.1s ease-in-out, height 0.1s ease-in-out;
+            }
+            .button-png {
+                position: absolute;
+                margin: auto;
+                z-index: 1;
+                width: 60%;
+                height: 60%;
+                &:hover ~ .circle-hover {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+            img {
+                width: 100%;
+                height: auto;
+            }
+    }
+}
+
+section.song {
+    display: flex;
+    justify-content: center;
+    margin-top: -1em;
+}
