@@ -20,7 +20,7 @@
           "24": "icons/icons8-youtube-24.png",
           "32": "icons/icons8-youtube-32.png"
         },
-        "default_title": "Click Me",
+        "default_title": "Randomize the playing order !",
         "default_popup": "popup/popup.html"
-      }
+    }
 }

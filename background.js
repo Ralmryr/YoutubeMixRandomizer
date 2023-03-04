@@ -9,8 +9,9 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
                 const urlParameters = new URLSearchParams(queryParamters);
                 console.log("message sent");
                     chrome.tabs.sendMessage(details.tabId, {
-                        type: "NEW_PAGE",
-                        videoId: urlParameters.get("v")
+                        type: "NEW_YT_VIDEO",
+                        videoId: urlParameters.get("v"),
+                        ytTabId: details.tabId
                     });
             }
         });
