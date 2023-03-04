@@ -9,7 +9,7 @@
     console.log("The console is working");
 
     chrome.runtime.onMessage.addListener((obj, sender, response) => {
-        const {type, videoId, tabId} = obj;
+        const type = obj.type;
 
         // The popup load only once
         if(type === "POPUP_LOADED" && !popupLoaded) {
@@ -18,8 +18,12 @@
             trackIndex = 0;
             videoPlayer = document.getElementsByClassName('video-stream')[0];
             console.log("New page loaded");
-            ytTabId = tabId;
+            ytTabId = obj.tabId;
             title = document.querySelector('h1.ytd-watch-metadata').innerText;
+        }
+
+        if(type === "ARM_TIMER") {
+            chrome.runtime.sendMessage({type: "START_ALARM"});
         }
 
         if(type === "REQUEST_TITLE") {
@@ -33,8 +37,6 @@
         }
 
         if(type === "SHUFFLE") {
-
-            console.log("SHUFFLE");
             // If the tracklist is empty, it means it's the first time that the user clicked the shuffle button
             if(tracklist.length == 0) {
                 // Get all the text from description of the video
@@ -69,6 +71,11 @@
         chrome.runtime.sendMessage({
             type: "NEW_SONG_TITLE",
             title: currentTrack.songName
+        });
+
+        chrome.runtime.sendMessage({
+            type: "START_ALARM",
+            duration: currentTrack.duration
         });
     }
 

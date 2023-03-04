@@ -41,7 +41,7 @@ import { getActiveTabURL } from "../scripts/utils.js";
         chrome.tabs.sendMessage(activeTab.id, {
             type: "REQUEST_TITLE",
         }, (response) => {
-            if(response.title !== "") {
+            if(Object.keys(response).length != 0 && response.title !== "") {
                 document.getElementById("song-name").innerHTML = response.title;
             }
         });

@@ -3,7 +3,7 @@
     "manifest_version": 3,
     "version": "0.1",
     "description": "A small chrome extension to randomize the play order of musics in hours long mix",
-    "permissions": ["storage", "tabs", "activeTab", "scripting", "webNavigation"],
+    "permissions": ["storage", "tabs", "activeTab", "scripting", "webNavigation", "alarms"],
     "host_permissions": ["https://*.youtube.com/*"],
     "content_scripts": [
         {
